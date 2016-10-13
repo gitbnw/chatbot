@@ -32,6 +32,7 @@ PLATFORMS
 
 DEPENDENCIES
   httparty
+  json (~> 1.8.3)
   sinatra
   sinatra-contrib
   tilt (~> 2.0.2)

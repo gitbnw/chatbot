@@ -8,3 +8,5 @@ gem 'httparty'
 gem 'wit'
 
 gem 'tilt',  '~>2.0.2'
+
+gem 'json', '~>1.8.3'
