@@ -1,34 +1,49 @@
  (function() {
-     function ChatCtrl($scope, $http, Messages, Auth) {
+     function ChatCtrl($scope, $firebaseArray, $http, Messages, Auth) {
          var $ctrl = this;
-
+         var d = Date.now();
          $ctrl.auth = Auth;
-         $ctrl.auth.$onAuthStateChanged(function(firebaseUser) {
-             var d = Date.now();
-             $scope.firebaseUser = firebaseUser;
-                 var data = {
-                         v: d,
-                         q: "skynet online",
-                         session_id: $scope.firebaseUser.uid + "-" + d 
-                 };
-                 
-                 $http({
-                  url: "/converse",
-                  method: "POST",
-                  params: data
-                 }).success(function (data, status, headers, config) {
-                  console.log(data)
-            })
-            .error(function (data, status, header, config) {
-            });
-                 
 
+         $ctrl.auth.$signInAnonymously().then(function(firebaseUser) {
+             $scope.firebaseUser = firebaseUser;
+             $scope.session_id = $scope.firebaseUser.uid + "-" + d
+             var messagesRef = firebase.database().ref().child("messages");
+             // download the data from a Firebase reference into a (pseudo read-only) array
+             $ctrl.messages = Messages.allMessages
+                 // create a query for messages related to session
+             $ctrl.sessionMessages = Messages.getSessionMessages($scope.session_id)
+             //quick replies should only show for last session message
+             $ctrl.lastSessionMessage = Messages.getLastSessionMessage($scope.session_id)
+             
+             $ctrl.messageData = {};
+             var initData = 
+             {
+                 v: d,
+                 q: "skynet online",
+                 session_id: $scope.firebaseUser.uid + "-" + d
+             };
+             $http({
+                     url: "/converse",
+                     method: "POST",
+                     params: initData
+                 }).success(function(data, status, headers, config) {
+                     $ctrl.messageData.session = initData.session_id;
+                     $ctrl.messageData.session.content = data.msg;
+                     $ctrl.messageData.session.quickreplies = data.quickreplies;
+                     $ctrl.messageData.session.sentAt = d;
+                     $ctrl.messageData.session.role = "chatbot";
+                     
+                     
+                     
+                     $ctrl.sendMessages($ctrl.messageData);
+                 })
+                 .error(function(data, status, header, config) {});
+         }).catch(function(error) {
+             $scope.error = error;
          });
 
-         $ctrl.messageData = {};
-
-         $ctrl.getHistory = function(chatSession) {
-             Messages.getMessages(chatSession)
+         $ctrl.sendMessages = function(messageData) {
+             Messages.send(messageData);
          };
 
 
@@ -49,5 +64,5 @@
      }
      angular
          .module('chatbot')
-         .controller('ChatCtrl', ['$scope', '$http', 'Messages', 'Auth', ChatCtrl]);
+         .controller('ChatCtrl', ['$scope', '$firebaseArray', '$http', 'Messages', 'Auth', ChatCtrl]);
  })();

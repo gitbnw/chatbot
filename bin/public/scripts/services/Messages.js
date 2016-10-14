@@ -1,27 +1,37 @@
 (function() {
-    function Messages($firebaseArray) {
+    function Messages($firebaseArray, $firebaseObject) {
         
-        var ref = firebase.database().ref("messages");
-        var messages = $firebaseArray(ref)
+        var ref = firebase.database().ref("messages")
 
+        var sessionsRef = firebase.database().ref().child("sessions"); 
 
         return {
-            getMessages: function(sessionId) {
-                var sessionMessages = $firebaseArray(ref.orderByChild("session").equalTo(sessionId))
-                sessionMessages.$loaded().then(function() {
-                    console.log(sessionMessages)
-                    return sessionMessages
-                })
+            allMessages: $firebaseArray(ref),
 
+            getSessionMessages: function(sessionId) {
+                // var query = ref.orderByChild("session").equalTo(sessionId);
+                // console.log($firebaseArray(query))
+                // return $firebaseArray(query)
             },
+             getLastSessionMessage: function(sessionId) {
+                // var query = ref.orderByChild("sessionId").equalTo(sessionId);
+                // console.log($firebaseArray(query))
+                // return $firebaseObject(query);
+                
+            },           
+            
             send: function(newMessage) {
                 // Send to firebase
-                messages.$add(newMessage).then(function() {})
+                console.log(newMessage)
+                var newMessage = {"sessionID3":{
+                    "messagedata1": {"content":"foo"}
+                }}
+                $firebaseArray(ref).$add(newMessage).then(function() {})
 
             }
         }
     }
     angular
         .module('chatbot')
-        .factory('Messages', ['$firebaseArray', Messages]);
+        .factory('Messages', ['$firebaseArray', '$firebaseObject', Messages]);
 })();

@@ -1,3 +1,59 @@
+.chat {
+  font: 400 15px 'Open Sans', sans-serif;
+  max-width: 500px; 
+  min-height: 500px;
+  margin: 20px;
+  border: 1px solid #dee0e2;
+  border-radius: 15px;
+  padding: 5px;
+  position: relative;
+}
+
 .chat-box {
+   
+}
+
+.chat-message {
+   max-width: 80%;
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 25px;
+  clear: both;
+}
+
+.chatbot {
+
+  background: #E5E5EA;
+  color: black;
+  float: left;
+  clear:both;
+}
+
+.human {
+  background: #00e34d;
+  color:white;
+  float: right;
+  clear:both;    
+}
+
+.quickrep {
+  background: silver;
+  color:black;
+}
+
+#messageForm {
+    bottom: 0px;
+    position: absolute;
     
+}
+
+#messageForm input {
+    width: 400px;
+    display: inline-block;
+    margin-right: 15px;
+    border-radius: 5px;
+}
+
+#messageForm btn {
+    display: inline-block;
 }

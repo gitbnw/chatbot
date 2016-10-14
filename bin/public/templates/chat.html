@@ -1,17 +1,20 @@
-<div>
-<div class="chat-box" ng-repeat="message in chat.history.messages track by $index">
-                <span class="text-info"> {{message.content}} </span>
+<div class="chat container">
+<div class="chat-box " ng-repeat="message in chat.sessionMessages track by $index">
+    <div class="chat-message" ng-class="message.role">
+                <span> {{message.content}} </span>
+                </div>
 </div>  
+
 <form id="messageForm" class="form" role="form" ng-submit="chat.sendMessage()">
     <div class="form-group">
         <div class="input-group">
+            <button type="submit" class="btn btn-info">Send</button>
             <input type="text" class="form-control transparent-input" id="message" ng-model="messageData.content">
-            <div class="clear">
-                <button type="submit" class="btn btn-info">Send</button>
-            </div>
         </div>
     </div>
     </form>
+    <div ng-if="chat.quickreplies" ng-repeat="reply in chat.sessionMessages.last track by $index">
+        <div class="quickrep" >{{reply}}</div>
+    </div>
 </div>
-{{chat.history}}
-{{ firebaseUser }}
+
