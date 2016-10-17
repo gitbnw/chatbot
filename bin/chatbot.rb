@@ -53,7 +53,8 @@ post '/converse' do
   @v = params[:v]
   @session_id = params[:session_id]
   @q = params[:q]
-rsp = client.converse(@session_id, @q, {"intent" => "greeting", "level_zero" => true}, true)
+  @intent = params[:intent]
+rsp = client.converse(@session_id, @q, {"intent" => @intent}, true)
 puts rsp["confidence"]
 j_rsp = rsp.to_json
 return j_rsp
