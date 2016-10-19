@@ -1,8 +1,8 @@
 (function() {
     function Messages($firebaseArray, $firebaseObject) {
 
-        var ref = firebase.database().ref("data")
-        var data = $firebaseArray(ref);
+        var ref = firebase.database().ref("messages")
+         var messages = $firebaseArray(ref);
 
 
 
@@ -10,9 +10,9 @@
             allMessages: $firebaseArray(ref),
 
             getSessionMessages: function(sessionId) {
-                var sessionRef = ref.orderByChild("data").equalTo(sessionId)
-                var messagesRef = sessionRef.ref("messages")
-                var sessionMessages = $firebaseArray(messagesRef.orderByChild("session").equalTo(sessionId))
+                var sessionRef = ref.orderByChild("session").equalTo(sessionId)
+                var sessionMessages = $firebaseArray(sessionRef)
+             
                 return sessionMessages
             },
              getLastSessionMessage: function(sessionId) {
@@ -24,7 +24,7 @@
             
             send: function(newMessage, session) {
                 // Send to firebase
-                var messageRef = data.$ref().child(session + "/messages/" + Date.now() +"/");
+                var messageRef = messages.$ref().child(Date.now() +"/");
                 return messageRef.set(newMessage) //return Promise
             }
         }

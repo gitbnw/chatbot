@@ -1,16 +1,23 @@
+
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
 .chat {
   font: 400 15px 'Open Sans', sans-serif;
-  max-width: 500px; 
-  min-height: 500px;
+  height: 500px;
+  width: 500px;
   margin: 20px;
-  border: 1px solid #dee0e2;
-  border-radius: 15px;
   padding: 5px;
   position: relative;
+  overflow: hidden;
 }
 
 .chat-box {
-   
+  height:385px;
+  width:100%;
+  margin-right: -22px;
+  overflow: auto;
 }
 
 .chat-message {
