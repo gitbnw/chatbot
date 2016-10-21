@@ -49,15 +49,23 @@ get '/chat.json' do
   }.to_json
 end
 
-post '/converse' do
+post '/converse/msg' do
+  
   @v = params[:v]
   @session_id = params[:session_id]
   @q = params[:q]
   @intent = params[:intent]
+  
 rsp = client.converse(@session_id, @q, {"intent" => @intent}, true)
 puts rsp["confidence"]
-j_rsp = rsp.to_json
-return j_rsp
+
+  j_rsp = rsp.to_json
+  return j_rsp  
+
+end
+
+post '/converse/action' do
+
 end
 
 
@@ -113,3 +121,5 @@ def getDances
   band = randomDance["band"]
   link = randomDance["link"]
 end
+
+

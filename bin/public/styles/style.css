@@ -11,6 +11,7 @@
   padding: 5px;
   position: relative;
   overflow: hidden;
+  border: 1px solid #f2f4f7;
 }
 
 .chat-box {
@@ -26,6 +27,7 @@
   padding: 10px 20px;
   border-radius: 25px;
   clear: both;
+  margin:4px;
 }
 
 .chatbot {
@@ -50,7 +52,7 @@
 
 #messageForm {
     bottom: 0px;
-    position: absolute;
+    position: relative;
     
 }
 
@@ -63,4 +65,24 @@
 
 #messageForm btn {
     display: inline-block;
+}
+
+.quickrep {
+  height:50px;
+  width: auto;
+  background: #08A4D8; 
+  color: white;
+  display: inline-block;
+  border-radius: 5px;
+  margin: 4px;
+  padding: 4px;
+text-align:center;
+line-height:42px;
+}
+
+.quickreplies-container {
+  position: relative;
+  margin-bottom: 4px;
+  height:54px;
+  width:auto;
 }
