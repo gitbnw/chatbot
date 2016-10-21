@@ -18,7 +18,8 @@
          var witData = {
              v: d,
              q: "skynet online",
-             intent: "greeting"
+             intent: "greeting",
+             type: "msg"
          }
          $ctrl.auth = Auth;
 
@@ -90,6 +91,7 @@
                              $ctrl.messageData.role = "chatbot";
                              $ctrl.messageData.sentAt = Date.now();
                              $ctrl.messageData.content = data.msg
+                             
                              if (data.quickreplies) {
                                  $ctrl.messageData.quickreplies = data.quickreplies;
                              }
@@ -103,7 +105,9 @@
                              } else if (data.type == "action"){
                               //this is limited to only one action can occur before we reset // 
                               // can only handle 1 text or 1 action then 1 text
-                              Converse.wit(witData)
+                              console.log(data)
+                              // data is WIt's repsonse so i need to post to my actio
+                              Converse.send(data)
                              }
                          })
                  })

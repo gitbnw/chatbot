@@ -65,7 +65,10 @@ puts rsp["confidence"]
 end
 
 post '/converse/action' do
-
+  
+  result = send(params["action"])
+  return result
+  
 end
 
 
@@ -120,6 +123,34 @@ def getDances
   randomDance = @pumpkinDances[rand(0..2)]
   band = randomDance["band"]
   link = randomDance["link"]
+end
+
+def getProgSkills
+   explainStr = "Byron has been working with "
+   javascriptStr = "javascript for #{MyTime.new(1430429574).calculate} including Angular 1 and Sencha/ExtJS."
+   rubyStr = "He has been using ruby for #{MyTime.new(1442854914).calculate} .  Ask again and the times will update ;)"
+   puts "#{explainStr} #{javascriptStr} #{rubyStr}"
+   return "#{explainStr} #{javascriptStr} #{rubyStr}"
+end
+
+class MyTime
+
+  attr_accessor :starttime
+  def initialize starttime
+    @starttime = starttime
+  end
+
+def calculate
+    now = Time.now 
+    seconds = (now.to_i - starttime.to_i)
+    days = seconds / 86400;
+    hours = seconds / 3600;
+    minutes = (seconds - (hours * 3600)) / 60;
+    seconds = (seconds - (hours * 3600) - (minutes * 60));  
+    return "#{days} days, #{hours} hours, #{minutes} minutes, and #{seconds} seconds."
+end
+  
+
 end
 
 
