@@ -10,10 +10,10 @@
 
             <!--{{reply}}-->
 
-            <button class="btn btn-info quickrep" ng-click="chat.quickExchange(reply)" ng-repeat="reply in chat.messageData.quickreplies track by $index">{{reply}}</button>
+            <button class="btn btn-info quickrep" ng-click="chat.quickExchange(reply, $index + 1)" ng-repeat="reply in chat.messageData.quickreplies track by $index">{{reply}}</button>
 
     </div>
-    <div class="container">
+    <div class="">
         <form id="messageForm" class="form" role="form" ng-submit="chat.userExchange()">
             <div class="form-group">
                 <div class="input-group">

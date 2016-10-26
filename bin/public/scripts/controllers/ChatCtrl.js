@@ -65,8 +65,10 @@
              return Converse.send(witData);
          };
 
-         $ctrl.quickExchange = function(content) {
+         $ctrl.quickExchange = function(content, index) {
            $scope.formData.umsg = content;
+           $scope.formData.option = index
+           console.log(index);
            $ctrl.userExchange();
          };
 
@@ -76,22 +78,26 @@
              $ctrl.messageData.quickreplies = null;
              $ctrl.messageData.sentAt = Date.now();
              $ctrl.messageData.content = $scope.formData.umsg
-             
+             if ($scope.formData.option) {
+               $ctrl.messageData.option = $scope.formData.option;
+              }
              //send user message to firebase
              Messages.send($ctrl.messageData, $scope.session_id)
                  .then(function() {
                      $scope.formData = {};
                      witData.intent = null;
                      witData.q = $ctrl.messageData.content;
+                     witData.option = $ctrl.messageData.option
                      
                      //send user message to wit
                      Converse.send(witData)
                          .success(function(data, status, headers, config) {
+                          // wit bot response
                              
                              $ctrl.messageData.role = "chatbot";
                              $ctrl.messageData.sentAt = Date.now();
                              $ctrl.messageData.content = data.msg
-                             
+                             console.log(data)
                              if (data.quickreplies) {
                                  $ctrl.messageData.quickreplies = data.quickreplies;
                              }
@@ -105,8 +111,10 @@
                              } else if (data.type == "action"){
                               //this is limited to only one action can occur before we reset // 
                               // can only handle 1 text or 1 action then 1 text
-                              console.log(data)
+                              
                               // data is WIt's repsonse so i need to post to my actio
+                              data.session_id = $scope.session_id
+                              console.log(data)
                               Converse.send(data)
                              }
                          })

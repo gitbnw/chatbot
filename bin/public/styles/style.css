@@ -8,20 +8,20 @@
   height: 500px;
   width: 500px;
   margin: 20px;
-  padding: 5px;
+  /*padding: 5px;*/
   position: relative;
-  overflow: hidden;
+  /*overflow: hidden;*/
   border: 1px solid #f2f4f7;
 }
 
 .chat-box {
   height:385px;
-  margin-right: -18px;
+  margin-right: -22px;
   overflow: auto;
 }
 
 .chat-message {
-   max-width: 80%;
+   max-width: 75%;
   position: relative;
   padding: 10px 20px;
   border-radius: 25px;
@@ -58,7 +58,7 @@
 #messageForm input {
     width: 400px;
     display: inline-block;
-    margin-right: 15px;
+    margin-right: 8px;
     border-radius: 5px;
 }
 
