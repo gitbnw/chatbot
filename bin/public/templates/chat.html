@@ -1,7 +1,8 @@
 <div class="chat container" id="chat">
     <div class="chat-box" id="chat-box">
         <div class="chat-message" ng-class="message.role" ng-repeat="message in chat.sessionMessages track by $index">
-            <span> {{message.content}} </span>
+            <!--<span> {{message.content}} </span>-->
+            <span ng-bind-html="message.content"></span>
             {{chat.updateScroll()}}
         </div>
     </div>

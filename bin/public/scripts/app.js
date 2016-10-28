@@ -13,6 +13,6 @@
              });
      }
      angular
-         .module('chatbot', ['firebase', 'ui.router'])
+         .module('chatbot', ['firebase', 'ui.router', 'ngSanitize'])
          .config(config);
  })();

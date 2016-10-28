@@ -26,7 +26,6 @@
             send: function(newMessage, session) {
                 // Send to firebase
                 var messageRef = messages.$ref().child(Date.now() +"/");
-                console.log(newMessage)
                 return messageRef.set(newMessage) //return Promise
             }
         }

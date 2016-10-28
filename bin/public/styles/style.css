@@ -10,14 +10,15 @@
   margin: 20px;
   /*padding: 5px;*/
   position: relative;
-  /*overflow: hidden;*/
+  overflow: hidden;
   border: 1px solid #f2f4f7;
 }
 
 .chat-box {
   height:385px;
-  margin-right: -22px;
-  overflow: auto;
+  margin-right: -32px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .chat-message {

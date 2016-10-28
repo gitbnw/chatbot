@@ -4,6 +4,9 @@ require 'bundler/setup'
 require 'uri'
 require 'open-uri'
 require 'httparty'
+require 'time_diff'
+
+
 # require 'wit'
 require "sinatra/config_file"
 
@@ -49,23 +52,26 @@ class WitWeb
   
   include HTTParty
 
-  debug_output $stdout # <= this is it!
+  debug_output $stdout # <= debug httparty
 
   base_uri 'https://api.wit.ai'
+  format :json
 
   def initialize access_token
     @access_token = access_token
     @auth = "Bearer " + @access_token
   end
   
-  def converse version, session_id, query, options = {}
-    @v = version
+  def converse session_id, query, context = {}
+    @v = '20161001'
     @s = session_id
     @q = query
-    
-
-    self.class.post("/converse?v=#{@v}&session_id=#{@s}&q=#{@q}", :headers => { "Authorization" => @auth},)
-    
+    @context = context
+    if query.nil?
+      self.class.post("/converse?v=#{@v}&session_id=#{@s}", :headers => { "Authorization" => @auth, "Content-Type" => "application/json"}, :body => @context)
+    else
+      self.class.post("/converse?v=#{@v}&session_id=#{@s}&q=#{@q}", :headers => { "Authorization" => @auth, "Content-Type" => "application/json"}, :body => @context)
+    end
   end
 
 end
@@ -74,8 +80,6 @@ end
 # client.logger.level = Logger::DEBUG
 
 client = WitWeb.new(access_token)
-rsp = client.converse('20160526','user-1', 'hey')
-p rsp
 
 
 # get '/chat.json' do
@@ -90,34 +94,27 @@ p rsp
 #   }.to_json
 # end
 
-# post '/converse/msg' do
-  
-#   @v = params[:v]
-#   @session_id = params[:session_id]
-#   @q = params[:q]
-#   @context = {}
-#   @context["option"] = params[:option]
-#   @context["intent"] = params[:intent]
-  
-# response = HTTParty.post('https://api.wit.ai/converse?v=20160526&session_id=123abc&q=weather%20in%20Brussels')
-# rsp = client.converse(@session_id, @q, @context)
+post '/converse/msg' do
 
-# return rsp.to_json
+  @session_id = params[:session_id]
+  @q = params[:q]
 
-# end
+  rsp = client.converse(@session_id, @q)
+  
+  return rsp.to_json
 
-# post '/converse/action' do
-# raise
-#   @session_id = params[:session_id]
-#   @q = nil
-#   @rsp = {}
-#   puts 'client run actions 1'
-#   @rsp = client.run_actions(@session_id, @q, @rsp)
-  
-#   puts 'client run actions 2'
-#   return @rsp
-  
-# end
+end
+
+post '/converse/action' do
+puts "my params: #{params}"
+  @session_id = params[:session_id]
+  @q = nil
+  @context = send(params[:action])
+
+  rsp = client.converse(@session_id, @q, @context.to_json)
+  return rsp.to_json
+
+end
 
 
 # class Job
@@ -155,51 +152,57 @@ p rsp
 #       return jobSummaryStr
 # end
 
-# @pumpkinDances = [
-#   {
-#   "band" => "21 Pilots",
-#   "link" => "https://www.youtube.com/watch?v=aaHw8QfemHk"
-#   },{
-#     "band" => "Ke$ha",
-#     "link" => "https://www.youtube.com/watch?v=J_6aIPbQht4"
-#   },{
-#     "band" => "Wii Music",
-#     "link" => "https://www.youtube.com/watch?v=7MGsaN5eDfc"
-#   }]
 
-# def getDances
-#   randomDance = @pumpkinDances[rand(0..2)]
-#   band = randomDance["band"]
-#   link = randomDance["link"]
-# end
 
-# def getProgSkillsString
-#   puts 'getProgSkillsString running'
-#   explainStr = "Byron has been working with "
-#   javascriptStr = "javascript for #{MyTime.new(1430429574).calculate} including Angular 1 and Sencha/ExtJS."
-#   rubyStr = "He has been using ruby for #{MyTime.new(1442854914).calculate}  Ask again and the times will update ;)"
-#   puts "#{explainStr} #{javascriptStr} #{rubyStr}"
-#   return "#{explainStr} #{javascriptStr} #{rubyStr}"
-# end
+def getDances
 
-# class MyTime
-
-#   attr_accessor :starttime
-#   def initialize starttime
-#     @starttime = starttime
-#   end
-
-# def calculate
-#     now = Time.now 
-#     seconds = (now.to_i - starttime.to_i)
-#     days = seconds / 86400;
-#     hours = seconds / 3600;
-#     minutes = (seconds - (hours * 3600)) / 60;
-#     seconds = (seconds - (hours * 3600) - (minutes * 60));  
-#     return "#{days} days, #{hours} hours, #{minutes} minutes, and #{seconds} seconds."
-# end
+  pumpkinDances = [
+    {
+    "text" => "Bust a move with ",
+    "band" => "21 Pilots",
+    "link" => "https://www.youtube.com/watch?v=aaHw8QfemHk"
+    },{
+      "text" => "Oh snap! Get down with ",
+      "band" => "Ke$ha",
+      "link" => "https://www.youtube.com/watch?v=J_6aIPbQht4"
+    },{
+      "text" => "Aw yeah.  Love to boogie to ",
+      "band" => "Wii Music",
+      "link" => "https://www.youtube.com/watch?v=7MGsaN5eDfc"
+    }]  
   
+  randomDance = pumpkinDances[rand(0..2)]
+  text = randomDance["text"]
+  band = randomDance["band"]
+  link = randomDance["link"]
+  danceStr = "#{text}<a target=\"_blank\" href=\"#{link}\">#{band}</a>"
+  context = Hash.new
+  context["danceStr"] = danceStr
+  return context
+end
 
-# end
+def getProgSkills
+  explainStr = "Byron has been working with "
+  javascriptStr = "javascript for #{MyTime.new('2015-04-30').calculate[:diff]}."
+  rubyStr = "He has been using ruby for #{MyTime.new('2015-09-21').calculate[:diff]}.  Ask again and the times will update ;)"
+  progStr = "#{explainStr} #{javascriptStr} #{rubyStr}"
+  context = Hash.new
+  context["progStr"] = progStr
+  return context
+end
+
+class MyTime
+
+  attr_accessor :starttime
+  def initialize starttime
+    @starttime = starttime
+  end
+
+  def calculate
+      diff = Time.diff(Time.now, Time.parse(starttime), '%y, %M, %w, %d, %H, %N, and %S')
+      return diff
+  end
+
+end
 
 
