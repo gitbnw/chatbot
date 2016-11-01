@@ -20,33 +20,6 @@ get '/' do
 send_file File.expand_path('pages/index.html', settings.public_folder)
 end
 
-# actions = {
-#   send: -> (request, response) {
-#     puts("sending... #{response['text']}")
-#     return response
-#   },
-#   merge: -> (request) {
-#     puts 'merge is running'
-#     context = request['context']
-#     entities = request['entities']
-
-#     # context.delete 'joke'
-#     # context.delete 'ack'
-    
-#     # category = first_entity_value(entities, 'category')
-#     choice = first_entity_value(entities, 'choice')
-#     context['choice'] = choice unless choice.nil?
-#     # sentiment = first_entity_value(entities, 'sentiment')
-#     # context['ack'] = sentiment == 'positive' ? 'Glad you liked it.' : 'Hmm.' unless sentiment.nil?
-#     return context
-#   },  
-#   :'getProgSkills' => -> (request) {
-#     context = request['context']
-    
-#     context['progString'] = 'some skills' #getProgSkillsString
-#     return context
-#   }
-# }
 
 class WitWeb
   
@@ -73,26 +46,28 @@ class WitWeb
       self.class.post("/converse?v=#{@v}&session_id=#{@s}&q=#{@q}", :headers => { "Authorization" => @auth, "Content-Type" => "application/json"}, :body => @context)
     end
   end
+  
+  def message query
+    @v = '20161001'
+    @q = query
+    self.class.get("/message?v=#{@v}&q=#{@q}", :headers => { "Authorization" => @auth})
+  end
 
 end
 
-# client = Wit.new(access_token: access_token, actions: actions)
-# client.logger.level = Logger::DEBUG
 
 client = WitWeb.new(access_token)
 
 
-# get '/chat.json' do
-#   content_type :json
-#   { 
-#     :cnv => {
-#       :rsp => rsp,
-#       :session => user_session,
-#       :sentAt => time,
-#       :role => role
-#     }
-#   }.to_json
-# end
+get '/message' do
+
+  @q = params[:q]
+
+  rsp = client.message(@q)
+  
+  return rsp.to_json
+
+end
 
 post '/converse/msg' do
 
@@ -100,13 +75,12 @@ post '/converse/msg' do
   @q = params[:q]
 
   rsp = client.converse(@session_id, @q)
-  
   return rsp.to_json
 
 end
 
 post '/converse/action' do
-puts "my params: #{params}"
+
   @session_id = params[:session_id]
   @q = nil
   @context = send(params[:action])
@@ -117,40 +91,40 @@ puts "my params: #{params}"
 end
 
 
-# class Job
-#   attr_accessor :company, :position, :span, :summary
-#   def initialize(company, position, span, summary)  
-#     @company = company  
-#     @position = position
-#     @span = span
-#     @summary = summary
-#   end
+class Job
+  attr_accessor :company, :position, :span, :summary
+  def initialize(company, position, span, summary)  
+    @company = company  
+    @position = position
+    @span = span
+    @summary = summary
+  end
 
-# end
+end
 
-# it_supp = Job.new('Investors Title Company', 'IT Support person', '2008 - 2011', 'IT support for real estate title agency.  Recreated the company web site with php and html.  Created a report generator of company activity using php and SQL.')  
-# sys_adm = Job.new('Stellar Manufacturing', 'Systems Administrator', '2011 - 2014', 'Administered and supported Windows environment.  Back-end and SQL work.')  
-# data_analys = Job.new('JDA eHealth Systems', 'Data Analyst', '2014 - 2015', 'Monitoring and troubleshooting multiple ETL processes of healthcare billing data. Application programmed in Foxpro and SQL.')  
-# sys_analys = Job.new('the Village of Oak Park', 'Systems Analyst', '2015 - 2016', 'Developed web application with javascript front-end (ExtJS) and Coldfusion/SQL backend.  Supported various applications with SQL programming.')  
+sys_adm = Job.new('Stellar Manufacturing', 'Systems Administrator', '2011 - 2014', 'Administered and supported Windows environment.  Back-end and SQL work.')  
+data_analys = Job.new('JDA eHealth Systems', 'Data Analyst', '2014 - 2015', 'Monitoring and troubleshooting multiple ETL processes of healthcare billing data. Application programmed in Foxpro and SQL.')  
+sys_analys = Job.new('the Village of Oak Park', 'Systems Analyst', '2015 - 2016', 'Developed web application with javascript front-end (ExtJS) and Coldfusion/SQL backend.  Supported various applications with SQL programming.')  
 
-# @work_history = [it_supp, sys_adm, data_analys, sys_analys]
+@work_history = [sys_adm, data_analys, sys_analys]
 
-# def getJobSummaryString
-#   jobSummaryStr = "Byron's last 4 jobs were as "
-#     @work_history.each do |job|
-#       if @work_history.last == job
-#         jobSummaryStr += "and "
-#       end
-#       jobSummaryStr += "a #{job.position} at #{job.company}"
-#       if @work_history.last != job
-#         jobSummaryStr += ", "
-#       else
-#       	jobSummaryStr += "."
-#       end      
-#     end
-
-#       return jobSummaryStr
-# end
+def getJobs
+  jobStr = "Byron's last 3 jobs were as "
+    @work_history.each do |job|
+      if @work_history.last == job
+        jobStr += "and "
+      end
+      jobStr += "a #{job.position} at #{job.company}"
+      if @work_history.last != job
+        jobStr += ", "
+      else
+      	jobStr += "."
+      end      
+    end
+  context = Hash.new
+  context["jobStr"] = jobStr
+  return context
+end
 
 
 
@@ -202,7 +176,18 @@ class MyTime
       diff = Time.diff(Time.now, Time.parse(starttime), '%y, %M, %w, %d, %H, %N, and %S')
       return diff
   end
+  
 
+end
+
+def cleanUp
+  context = Hash.new
+  return context
+end
+
+def nextStep
+  context = Hash.new
+  return context 
 end
 
 
